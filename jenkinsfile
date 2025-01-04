@@ -93,6 +93,8 @@ pipeline {
                 steps {
                     echo "Running app on staging env"
                     sh '''
+                    docker stop stagingEnv || true
+                    docker rm stagingEnv || true
                     docker run -itd --name stagingEnv -p 8082:8080 tomcat_app:$BUILD_NUMBER
                     '''
                 }
