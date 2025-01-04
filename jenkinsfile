@@ -3,12 +3,20 @@ pipeline {
         label 'SlaveNode'
     }
     stages {
+        stage('cleaning directory'){
+            steps{
+                echo "removing fils from"
+                sh 'pwd'
+                sh 'rm -rf *'
+
+            }
+        }
         stage('CloningGit') {
             steps {
                 echo "<><><><><><><><><><>"
                 echo "<>  Cloning Repo  <>"
                 echo "<><><><><><><><><><>"
-                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git'
+                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git .'
             }
         }
         stage('testing') {
@@ -26,9 +34,8 @@ pipeline {
                 }
                 failure {
                     echo "<><><><><><><><><><><><><>"
-                    echo "<>  Testing Package     <>"
+                    echo "<>  Testing failed     <>"
                     echo "<><><><><><><><><><><><><>"
-                    sh 'mvn clean test'
                 }
             }
         }
