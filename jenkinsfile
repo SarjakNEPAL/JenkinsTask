@@ -7,7 +7,7 @@ pipeline {
             steps{
                 echo "removing workspace"
                 sh 'pwd'
-                sh 'rm -rf *'
+                sh 'rm -rfy *'
             }
             post {
                 success {
