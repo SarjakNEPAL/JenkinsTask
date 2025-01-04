@@ -13,7 +13,7 @@ pipeline {
                     }
             }
         }
-        stage('Build') {
+        stage('testing') {
             steps {
                 echo "<><><><><><><><><><><><><>"
                 echo "<>  Testing Package     <>"
