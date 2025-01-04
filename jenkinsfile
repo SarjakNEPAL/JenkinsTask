@@ -73,15 +73,14 @@ pipeline {
                 }
             }
         }
-        stage('Create Tomcat Image') {
-            agent {
-                label 'SlaveNode'
-            }
-            steps {
-                copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
-deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://localhost:8080')], contextPath: '/', war:'**/*.war'
-            }
-        }
+    stage('Create Tomcat Image') { 
+    steps { 
+        copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER) 
+        echo "Building docker image" 
+        sh 'docker pull tomcat:latest' 
+        sh 'original_pwd=$(pwd -P)' 
+        sh "" 
+        sh 'cd $original_pwd' } }
         stage('Deploy to Staging Env') {
             steps {
                 echo "Running app on staging env"
