@@ -2,9 +2,12 @@ pipeline {
     agent {
         label 'SlaveNode'
     }
+    environment { 
+        MAVEN_HOME = tool name: 'Maven' 
+    }
     stages {
-        stage('cleaning directory'){
-            steps{
+        stage('cleaning directory') {
+            steps {
                 echo "removing workspace"
                 sh 'pwd'
                 sh 'rm -rf ./*'
@@ -21,22 +24,19 @@ pipeline {
                     echo "<><><><><><><><><><><><><>"
                 }
             }
-            
         }
         stage('CloningGit') {
             steps {
                 echo "<><><><><><><><><><>"
                 echo "<>  Cloning Repo  <>"
                 echo "<><><><><><><><><><>"
-                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git'
-                
+                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git .'
             }
         }
-        stage('checkingMaven'){
-            steps{
-            sh 'mvn -version'
+        stage('checkingMaven') {
+            steps {
+                sh 'mvn -version'
             }
-
         }
         stage('testing') {
             steps {
