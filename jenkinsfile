@@ -59,7 +59,7 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
+        stage('Building the app\' war file') {
             steps {
                 echo "<><><><><><><><><><><><><>"
                 echo "<>  Building from Pom  <>"
@@ -79,26 +79,26 @@ pipeline {
                 sh 'cd $original_pwd' 
                 } 
             }
-            stage('Deploy to Staging Env') {
+            stage('Deploy to StagingEnvironment') {
                 steps {
                     echo "Running app on staging env"
                     sh '''
                     docker stop stagingEnv || true
                     docker rm stagingEnv || true
-                    docker run -itd --name stagingEnv -p 8082:8080 tomcat_app:$BUILD_NUMBER
+                    docker run -itd --name stagingEnv -p 2025:8080 tomcat_app:$BUILD_NUMBER
                     '''
                 }
             }
-        stage('Deploy to Production Env') {
+        stage('Depoying To Production') {
             steps {
                 timeout(time: 2, unit: 'DAYS') {
                     input message: 'Do you approve?'
                 }
-                echo "Running app on prod. env"
+                echo "Running app on productionEnvironment"
                 sh '''
                 docker stop productionEnv || true
                 docker rm productionEnv || true
-                docker run -itd --name productionEnv -p 8083:8080 tomcat_app:$BUILD_NUMBER
+                docker run -itd --name productionEnv -p 2085:8080 tomcat_app:$BUILD_NUMBER
                 '''
             }
         }
