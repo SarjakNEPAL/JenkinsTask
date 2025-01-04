@@ -66,20 +66,9 @@ pipeline {
                 echo "<><><><><><><><><><><><><>"
                 sh 'mvn -f JenkinsTask/pom.xml clean package'
             }
-            post {
-                success {
-                    echo "Archiving the Artifact"
-                    archiveArtifacts artifacts: '**/*.war'
-                }
-            }
         }
-         stage('creating app image') { 
-             agent 
-             { 
-                label 'SlaveNode'
-             }
+         stage('creating app image') {
             steps { 
-                copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER) 
                 echo "Building docker image" 
                 sh 'docker pull tomcat:latest' 
                 sh 'original_pwd=$(pwd -P)' 
