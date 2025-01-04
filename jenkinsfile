@@ -66,12 +66,12 @@ pipeline {
                 echo "<><><><><><><><><><><><><>"
                 sh 'mvn -f JenkinsTask/pom.xml package'
                 sh 'cp JenkinsTask/target/techaxis-webapp.war JenkinsTask/ROOT.war'
-                archiveArtifacts artifacts: '**/*.war'
+                archiveArtifacts artifacts: '**/ROOT.war'
             }
         }
          stage('creating app image') {
             steps { 
-                copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
+                copyArtifacts filter: '**/ROOT.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
                 echo "Building docker image" 
                 sh 'docker pull tomcat:latest' 
                 sh 'original_pwd=$(pwd -P)' 
