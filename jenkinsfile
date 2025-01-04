@@ -28,15 +28,18 @@ pipeline {
                 echo "<><><><><><><><><><>"
                 echo "<>  Cloning Repo  <>"
                 echo "<><><><><><><><><><>"
-                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git'
+                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git .'
             }
+        }
+        stage('checkingMaven'){
+            sh 'mvn -version'
         }
         stage('testing') {
             steps {
                 echo "<><><><><><><><><><><><><>"
                 echo "<>  Testing Package     <>"
                 echo "<><><><><><><><><><><><><>"
-                sh 'mvn clean -f JenkinsTask/pom.xml test'
+                sh 'mvn clean test'
             }
             post {
                 success {
@@ -56,7 +59,7 @@ pipeline {
                 echo "<><><><><><><><><><><><><>"
                 echo "<>  Building from Pom  <>"
                 echo "<><><><><><><><><><><><><>"
-                sh 'mvn -f JenkinsTask/pom.xml clean package'
+                sh 'mvn clean package'
             }
             post {
                 success {
