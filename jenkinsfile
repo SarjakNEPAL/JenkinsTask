@@ -79,13 +79,14 @@ pipeline {
         echo "Building docker image" 
         sh 'docker pull tomcat:latest' 
         sh 'original_pwd=$(pwd -P)' 
-        sh "" 
+        sh "cd JenkinsTask" 
+        sh'docker build -t myApplicationImage:$BUILD_NUMBER .' 
         sh 'cd $original_pwd' } }
         stage('Deploy to Staging Env') {
             steps {
                 echo "Running app on staging env"
                 sh '''
-                docker run -itd --name stagingEnv -p 8082:8080 tomcat:$BUILD_NUMBER
+                docker run -itd --name stagingEnv -p 8082:8080 myApplicationImage:$BUILD_NUMBER
                 '''
             }
         }
@@ -98,7 +99,7 @@ pipeline {
                 sh '''
                 docker stop productionEnv || true
                 docker rm productionEnv || true
-                docker run -itd --name productionEnv -p 8083:8080 tomcat:$BUILD_NUMBER
+                docker run -itd --name productionEnv -p 8083:8080 myApplicationImage:$BUILD_NUMBER
                 '''
             }
         }
