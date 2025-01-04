@@ -65,12 +65,10 @@ pipeline {
                 echo "<>  Building from Pom  <>"
                 echo "<><><><><><><><><><><><><>"
                 sh 'mvn -f JenkinsTask/pom.xml package'
-                archiveArtifacts artifacts: '**/ROOT.war'
             }
         }
          stage('creating app image') {
             steps { 
-                copyArtifacts filter: '**/ROOT.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
                 echo "Building docker image" 
                 sh 'docker pull tomcat:latest' 
                 sh 'original_pwd=$(pwd -P)' 
