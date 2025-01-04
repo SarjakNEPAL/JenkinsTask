@@ -8,7 +8,7 @@ pipeline {
                 echo "<><><><><><><><><><>"
                 echo "<>  Cloning Repo  <>"
                 echo "<><><><><><><><><><>"
-                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git .'
+                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git'
             }
         }
         stage('testing') {
