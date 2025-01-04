@@ -28,7 +28,7 @@ pipeline {
                 echo "<><><><><><><><><><>"
                 echo "<>  Cloning Repo  <>"
                 echo "<><><><><><><><><><>"
-                git clone https://github.com/SarjakNEPAL/JenkinsTask.git 
+                git clone 'https://github.com/SarjakNEPAL/JenkinsTask.git'
                 
             }
         }
