@@ -73,28 +73,30 @@ pipeline {
                 }
             }
         }
-    stage('creating app image') { 
-        
-        agent 
+         stage('creating app image') { 
+             agent 
              { 
                 label 'SlaveNode'
-        }   
-        steps { 
-        copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER) 
-        echo "Building docker image" 
-        sh 'original_pwd=$(pwd -P)' 
-        sh "cd JenkinsTask" 
-        sh "ls"
-        sh'docker build -t tomcat_app:$BUILD_NUMBER .' 
-        sh 'cd $original_pwd' } }
-        stage('Deploy to Staging Env') {
-            steps {
-                echo "Running app on staging env"
-                sh '''
-                docker run -itd --name stagingEnv -p 8082:8080 tomcat_app:$BUILD_NUMBER
-                '''
+             }
+            steps { 
+                copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER) 
+                echo "Building docker image" 
+                sh 'docker pull tomcat:latest' 
+                sh 'original_pwd=$(pwd -P)' 
+                sh "cd JenkinsTask" 
+                sh "ls"
+                sh'docker build -t tomcat_app:$BUILD_NUMBER .' 
+                sh 'cd $original_pwd' 
+                } 
             }
-        }
+            stage('Deploy to Staging Env') {
+                steps {
+                    echo "Running app on staging env"
+                    sh '''
+                    docker run -itd --name stagingEnv -p 8082:8080 tomcat_app:$BUILD_NUMBER
+                    '''
+                }
+            }
         stage('Deploy to Production Env') {
             steps {
                 timeout(time: 2, unit: 'DAYS') {
