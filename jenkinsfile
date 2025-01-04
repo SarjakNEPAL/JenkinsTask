@@ -28,7 +28,10 @@ pipeline {
                 echo "<><><><><><><><><><>"
                 echo "<>  Cloning Repo  <>"
                 echo "<><><><><><><><><><>"
-                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git .'
+                sh 'git init'
+                sh 'git remote add origin https://github.com/SarjakNEPAL/JenkinsTask.git '
+                sh 'git pull origin main'
+                
             }
         }
         stage('checkingMaven'){
@@ -42,7 +45,7 @@ pipeline {
                 echo "<><><><><><><><><><><><><>"
                 echo "<>  Testing Package     <>"
                 echo "<><><><><><><><><><><><><>"
-                sh 'mvn -f JenkinsTask/pom.xml clean test'
+                sh 'mvn clean test'
             }
             post {
                 success {
