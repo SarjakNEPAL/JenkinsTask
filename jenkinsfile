@@ -28,8 +28,6 @@ pipeline {
                 echo "<><><><><><><><><><>"
                 echo "<>  Cloning Repo  <>"
                 echo "<><><><><><><><><><>"
-                sh 'git init'
-                sh 'git remote add origin https://github.com/SarjakNEPAL/JenkinsTask.git '
                 sh 'git pull origin main'
                 
             }
