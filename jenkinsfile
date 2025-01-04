@@ -7,7 +7,7 @@ pipeline {
             steps{
                 echo "removing workspace"
                 sh 'pwd'
-                sh 'rm -rfy *'
+                sh 'rm -rf ./*'
             }
             post {
                 success {
@@ -42,7 +42,7 @@ pipeline {
                 echo "<><><><><><><><><><><><><>"
                 echo "<>  Testing Package     <>"
                 echo "<><><><><><><><><><><><><>"
-                sh 'mvn clean test'
+                sh 'mvn -f JenkinsTask/pom.xml clean test'
             }
             post {
                 success {
