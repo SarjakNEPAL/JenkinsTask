@@ -79,12 +79,7 @@ pipeline {
             }
             steps {
                 copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
-                echo "Building docker image"
-                sh 'docker pull tomcat:latest'
-                sh 'original_pwd=$(pwd -P)'
-                sh "cd /home/jenkins/"
-                sh'docker build -t tomcat:$BUILD_NUMBER .'
-                sh 'cd $original_pwd'
+deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://localhost:8080')], contextPath: '/', war:
             }
         }
         stage('Deploy to Staging Env') {
