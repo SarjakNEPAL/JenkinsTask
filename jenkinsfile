@@ -9,7 +9,7 @@ pipeline {
                     echo "<><><><><><><><><><>"
                     echo "<>  Cloning Repo  <>"
                     echo "<><><><><><><><><><>"
-                    git branch: "master", url: "https://github.com/srtimsina/hello-devops.git" 
+                    git branch: "main", url: "https://github.com/SarjakNEPAL/JenkinsTask.git" 
                     }
             }
         }
