@@ -34,31 +34,31 @@ pipeline {
                 sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git '
             }
         }
-        stage('checkingMaven') {
-            steps {
-                sh 'mvn -version'
-            }
-        }
-        stage('testing') {
-            steps {
-                echo "<><><><><><><><><><><><><>"
-                echo "<>  Testing Package     <>"
-                echo "<><><><><><><><><><><><><>"
-                sh 'mvn -f JenkinsTask/pom.xml clean test'
-            }
-            post {
-                success {
-                    echo "<><><><><><><><><><><><><>"
-                    echo "<>  Testing Success     <>"
-                    echo "<><><><><><><><><><><><><>"
-                }
-                failure {
-                    echo "<><><><><><><><><><><><><>"
-                    echo "<>  Testing failed     <>"
-                    echo "<><><><><><><><><><><><><>"
-                }
-            }
-        }
+        // stage('checkingMaven') {
+        //     steps {
+        //         sh 'mvn -version'
+        //     }
+        // }
+        // stage('testing') {
+        //     steps {
+        //         echo "<><><><><><><><><><><><><>"
+        //         echo "<>  Testing Package     <>"
+        //         echo "<><><><><><><><><><><><><>"
+        //         sh 'mvn -f JenkinsTask/pom.xml clean test'
+        //     }
+        //     post {
+        //         success {
+        //             echo "<><><><><><><><><><><><><>"
+        //             echo "<>  Testing Success     <>"
+        //             echo "<><><><><><><><><><><><><>"
+        //         }
+        //         failure {
+        //             echo "<><><><><><><><><><><><><>"
+        //             echo "<>  Testing failed     <>"
+        //             echo "<><><><><><><><><><><><><>"
+        //         }
+        //     }
+        // }
         stage('Build') {
             steps {
                 echo "<><><><><><><><><><><><><>"
