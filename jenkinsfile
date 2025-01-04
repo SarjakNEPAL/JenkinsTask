@@ -79,7 +79,7 @@ pipeline {
             }
             steps {
                 copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
-deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://localhost:8080')], contextPath: '/', war:
+deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://localhost:8080')], contextPath: '/', war:'**/*.war'
             }
         }
         stage('Deploy to Staging Env') {
