@@ -99,7 +99,7 @@ pipeline {
                 sh '''
                 docker stop productionEnv || true
                 docker rm productionEnv || true
-                docker run -itd --name productionEnv -p 8083:8080 myApplicationImage:$BUILD_NUMBER
+                docker run -itd --name productionEnv -p 8083:8080 tomcat_app:$BUILD_NUMBER
                 '''
             }
         }
