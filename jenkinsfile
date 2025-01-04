@@ -32,7 +32,10 @@ pipeline {
             }
         }
         stage('checkingMaven'){
+            steps{
             sh 'mvn -version'
+            }
+
         }
         stage('testing') {
             steps {
