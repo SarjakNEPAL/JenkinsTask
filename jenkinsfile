@@ -1,0 +1,113 @@
+pipeline {
+    agent {
+        label 'SlaveNode'
+    }
+    stages{
+        stage('CloningGit') {
+            steps {
+                steps { 
+                    echo "<><><><><><><><><><>"
+                    echo "<>  Cloning Repo  <>"
+                    echo "<><><><><><><><><><>"
+                    git branch: "main", url: "https://github.com/srtimsina/hello-devops.git" 
+                    }
+            }
+        }
+        stage('Build') {
+            steps {
+                echo "<><><><><><><><><><><><><>"
+                echo "<>  Testing Package     <>"
+                echo "<><><><><><><><><><><><><>"
+                sh 'mvn clean test'
+            }
+            post {
+                success {
+                echo "<><><><><><><><><><><><><>"
+                echo "<>  Testing Success     <>"
+                echo "<><><><><><><><><><><><><>"
+                }
+                failure {
+                    echo "<><><><><><><><><><><><><>"
+                    echo "<>  Testing Package     <>"
+                    echo "<><><><><><><><><><><><><>"
+                    sh 'mvn clean test'
+                }
+            }
+
+        }
+        stage('Build') {
+            steps {
+                echo "<><><><><><><><><><><><><>"
+                echo "<>  Buillding from Pom  <>"
+                echo "<><><><><><><><><><><><><>"
+                sh 'mvn clean package'
+            }
+            post {
+                success {
+                    echo "Archiving the Artifact"
+                    archiveArtifacts artifacts: '**/*.war'
+                }
+            }
+        }
+        stage('Create Tomcat Image') {
+            agent {
+                label 'SlaveNode'
+            }
+            steps {
+                copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
+                echo "Building docker image"
+                sh '''
+                docker pull tomcat
+                original_pwd=$(pwd -P)
+                cd /home/jenkins/
+                docker build -t tomcat:$BUILD_NUMBER .
+                cd $original_pwd
+                sh '''
+            }
+        }
+        stage('Deploy to Stagging Env') {
+            steps {
+                echo "Running app on stagging env"
+                sh '''
+                docker run -itd --name stagingEnv -p 8082:8080 tomcat:$BUILD_NUMBER
+                sh '''
+            }
+        }
+        stage('Deploy to Production Env') {
+            steps {
+                timeout(time:1, unit:'DAYS'){
+                input message:'Approve PRODUCTION Deployment?'
+                }
+                echo "Running app on prod. env"
+                sh '''
+                docker stop productionEnv || true
+                docker rm productionEnv || true
+                docker run -itd --name productionEnv -p 8083:8080 tomcat:$BUILD_NUMBER
+                sh '''
+            }
+        }
+    }
+post { 
+        always { 
+            mail to: 'sarjakytdfiles@gmail.com',
+            subject: "Job '${JOB_NAME}' (${BUILD_NUMBER}) is waiting for input",
+            body: "Please go to ${BUILD_URL} and verify the build"
+        }
+
+        success {
+            mail bcc: '', body: """Hi Sarjak,
+
+            Build #$BUILD_NUMBER is successful, please go through the url: $BUILD_URL
+            Regards,
+            Jenkins""", cc: '', from: '', replyTo: '', subject: 'BUILD SUCCESS NOTIFICATION', to: 'sarjakytdfiles@gmail.com'
+                    }
+                    failure {
+                        mail bcc: '', body: """Hi Sarjak,
+                        
+            Build #$BUILD_NUMBER failed, please go through the url:$BUILD_URL
+
+            Regards,
+            Jenkins""", cc: '', from: '', replyTo: '', subject: 'BUILD FAILED NOTIFICATION', to: 'sarjakytdfiles@gmail.com'
+        }
+    }
+}
