@@ -87,6 +87,7 @@ pipeline {
                 sh "ls"
                 sh'docker build -t tomcat_app:$BUILD_NUMBER .' 
                 sh 'cd $original_pwd' 
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', path: '', url: 'http://localhost:8080')], contextPath: '/', war: '**/*.war
                 } 
             }
             stage('Deploy to Staging Env') {
