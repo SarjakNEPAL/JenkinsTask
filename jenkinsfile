@@ -64,7 +64,7 @@ pipeline {
                 echo "<><><><><><><><><><><><><>"
                 echo "<>  Building from Pom  <>"
                 echo "<><><><><><><><><><><><><>"
-                sh 'mvn -f JenkinsTask/pom.xml clean package'
+                sh 'mvn -f JenkinsTask/pom.xml package'
             }
         }
          stage('creating app image') {
