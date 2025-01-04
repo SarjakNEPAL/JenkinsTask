@@ -65,6 +65,7 @@ pipeline {
                 echo "<>  Building from Pom  <>"
                 echo "<><><><><><><><><><><><><>"
                 sh 'mvn -f JenkinsTask/pom.xml package'
+                sh 'cp JenkinsTask/target/techaxis-webapp.war JenkinsTask/root.war'
                 archiveArtifacts artifacts: '**/*.war'
             }
         }
