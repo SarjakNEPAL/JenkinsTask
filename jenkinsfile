@@ -2,15 +2,13 @@ pipeline {
     agent {
         label 'SlaveNode'
     }
-    stages{
+    stages {
         stage('CloningGit') {
             steps {
-                steps { 
-                    echo "<><><><><><><><><><>"
-                    echo "<>  Cloning Repo  <>"
-                    echo "<><><><><><><><><><>"
-                    sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git .'
-                    }
+                echo "<><><><><><><><><><>"
+                echo "<>  Cloning Repo  <>"
+                echo "<><><><><><><><><><>"
+                sh 'git clone https://github.com/SarjakNEPAL/JenkinsTask.git .'
             }
         }
         stage('testing') {
@@ -22,9 +20,9 @@ pipeline {
             }
             post {
                 success {
-                echo "<><><><><><><><><><><><><>"
-                echo "<>  Testing Success     <>"
-                echo "<><><><><><><><><><><><><>"
+                    echo "<><><><><><><><><><><><><>"
+                    echo "<>  Testing Success     <>"
+                    echo "<><><><><><><><><><><><><>"
                 }
                 failure {
                     echo "<><><><><><><><><><><><><>"
@@ -33,12 +31,11 @@ pipeline {
                     sh 'mvn clean test'
                 }
             }
-
         }
         stage('Build') {
             steps {
                 echo "<><><><><><><><><><><><><>"
-                echo "<>  Buillding from Pom  <>"
+                echo "<>  Building from Pom  <>"
                 echo "<><><><><><><><><><><><><>"
                 sh 'mvn clean package'
             }
@@ -62,52 +59,56 @@ pipeline {
                 cd /home/jenkins/
                 docker build -t tomcat:$BUILD_NUMBER .
                 cd $original_pwd
-                sh '''
+                '''
             }
         }
-        stage('Deploy to Stagging Env') {
+        stage('Deploy to Staging Env') {
             steps {
-                echo "Running app on stagging env"
+                echo "Running app on staging env"
                 sh '''
                 docker run -itd --name stagingEnv -p 8082:8080 tomcat:$BUILD_NUMBER
-                sh '''
+                '''
             }
         }
         stage('Deploy to Production Env') {
             steps {
-                timeout(time:1, unit:'DAYS'){
-                input message:'Approve PRODUCTION Deployment?'
+                timeout(time: 1, unit: 'DAYS') {
+                    input message: 'Approve PRODUCTION Deployment?'
                 }
                 echo "Running app on prod. env"
                 sh '''
                 docker stop productionEnv || true
                 docker rm productionEnv || true
                 docker run -itd --name productionEnv -p 8083:8080 tomcat:$BUILD_NUMBER
-                sh '''
+                '''
             }
         }
     }
-post { 
-        always { 
+    post {
+        always {
             mail to: 'sarjakytdfiles@gmail.com',
-            subject: "Job '${JOB_NAME}' (${BUILD_NUMBER}) is waiting for input",
-            body: "Please go to ${BUILD_URL} and verify the build"
+                 subject: "Job '${JOB_NAME}' (${BUILD_NUMBER}) is waiting for input",
+                 body: "Please go to ${BUILD_URL} and verify the build"
         }
-
         success {
-            mail bcc: '', body: """Hi Sarjak,
+            mail to: 'sarjakytdfiles@gmail.com',
+                 subject: 'BUILD SUCCESS NOTIFICATION',
+                 body: """Hi Sarjak,
 
-            Build #$BUILD_NUMBER is successful, please go through the url: $BUILD_URL
-            Regards,
-            Jenkins""", cc: '', from: '', replyTo: '', subject: 'BUILD SUCCESS NOTIFICATION', to: 'sarjakytdfiles@gmail.com'
-                    }
-                    failure {
-                        mail bcc: '', body: """Hi Sarjak,
-                        
-            Build #$BUILD_NUMBER failed, please go through the url:$BUILD_URL
+Build #${BUILD_NUMBER} is successful, please go through the url: ${BUILD_URL}
 
-            Regards,
-            Jenkins""", cc: '', from: '', replyTo: '', subject: 'BUILD FAILED NOTIFICATION', to: 'sarjakytdfiles@gmail.com'
+Regards,
+Jenkins"""
+        }
+        failure {
+            mail to: 'sarjakytdfiles@gmail.com',
+                 subject: 'BUILD FAILED NOTIFICATION',
+                 body: """Hi Sarjak,
+
+Build #${BUILD_NUMBER} failed, please go through the url: ${BUILD_URL}
+
+Regards,
+Jenkins"""
         }
     }
 }
