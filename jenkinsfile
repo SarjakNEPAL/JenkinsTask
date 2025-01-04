@@ -80,13 +80,11 @@ pipeline {
             steps {
                 copyArtifacts filter: '**/*.war', fingerprintArtifacts: true, projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER)
                 echo "Building docker image"
-                sh '''
-                docker pull tomcat
-                original_pwd=$(pwd -P)
-                cd /home/jenkins/
-                docker build -t tomcat:$BUILD_NUMBER .
-                cd $original_pwd
-                '''
+                sh 'docker pull tomcat'
+                sh 'original_pwd=$(pwd -P)'
+                sh "cd /home/jenkins/"
+                sh'docker build -t tomcat:$BUILD_NUMBER'
+                sh 'cd $original_pwd'
             }
         }
         stage('Deploy to Staging Env') {
@@ -99,8 +97,8 @@ pipeline {
         }
         stage('Deploy to Production Env') {
             steps {
-                timeout(time: 1, unit: 'DAYS') {
-                    input message: 'Approve PRODUCTION Deployment?'
+                timeout(time: 2, unit: 'DAYS') {
+                    input message: 'Do you approve?'
                 }
                 echo "Running app on prod. env"
                 sh '''
@@ -112,11 +110,6 @@ pipeline {
         }
     }
     post {
-        always {
-            mail to: 'sarjakytdfiles@gmail.com',
-                 subject: "Job '${JOB_NAME}' (${BUILD_NUMBER}) is waiting for input",
-                 body: "Please go to ${BUILD_URL} and verify the build"
-        }
         success {
             mail to: 'sarjakytdfiles@gmail.com',
                  subject: 'BUILD SUCCESS NOTIFICATION',
