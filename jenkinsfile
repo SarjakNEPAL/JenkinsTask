@@ -71,9 +71,9 @@ pipeline {
             steps { 
                 echo "Building docker image" 
                 sh 'docker pull tomcat:latest' 
-                sh 'original_pwd=$(pwd -P)' 
+                sh 'temp=$(pwd -P)' 
                 sh'docker build -f ./JenkinsTask/Dockerfile -t tomcat_app:$BUILD_NUMBER .' 
-                sh 'cd $original_pwd' 
+                sh 'cd $temp' 
                 } 
             }
             stage('Deploy to StagingEnvironment') {
